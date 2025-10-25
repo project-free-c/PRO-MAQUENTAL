@@ -29,11 +29,12 @@ import { Button } from "@/components/ui/button"
 import { Card, CardContent } from "@/components/ui/card"
 import Image from "next/image"
 
+const wsp = "https://wa.me/56983105174?text=Hola!%20Estoy%20interesado%20en%20obtener%20más%20información%20sobre%20el%20bioestimulante%20de%20algas.";
+
 const Header = () => {
   const [activeSection, setActiveSection] = useState<string>("");
   const [menuOpen, setMenuOpen] = useState(false);
 
-  // --- Detecta sección activa (opcional, puedes quitar si ya lo tienes en otro lado) ---
   useEffect(() => {
     const sections = document.querySelectorAll("section[id]");
     const observer = new IntersectionObserver(
@@ -44,7 +45,7 @@ const Header = () => {
           }
         });
       },
-      { threshold: 0.6 }
+      { threshold: 0.1 }
     );
 
     sections.forEach((section) => observer.observe(section));
@@ -74,9 +75,9 @@ const Header = () => {
             <Image
               src="/galeria/logo.png"
               alt="Logo Maquental"
-              width={60}
-              height={60}
-              className="mx-auto rounded-full"
+              width={40}
+              height={40}
+              className="mx-auto rounded-full md:w-[60px] md:h-[60px]"
             />
           </motion.div>
 
@@ -100,7 +101,7 @@ const Header = () => {
               </a>
             ))}
             <Button className="bg-primary hover:bg-ocean-deep text-primary-foreground">
-              <a href="https://wa.me/56983105174" target="_blank">
+              <a href={wsp} target="_blank">
                 Solicitar Información
               </a>
             </Button>
@@ -143,7 +144,7 @@ const Header = () => {
               ))}
               <Button className="bg-primary hover:bg-ocean-deep text-primary-foreground">
                 <a
-                  href="https://wa.me/56983105174"
+                  href={wsp}
                   target="_blank"
                   onClick={() => setMenuOpen(false)}
                 >
@@ -1015,7 +1016,7 @@ export default function MaquentalLanding() {
                   Solicita información sobre Agroalgas y descubre cómo podemos ayudarte
                 </p>
                 <Button size="lg" className="bg-white text-ocean hover:bg-sand text-lg px-8">
-                  <a href="https://wa.me/56983105174" target="_blank">
+                  <a href={wsp} target="_blank">
                     Solicitar Información
                   </a>
                 </Button>
@@ -1108,7 +1109,7 @@ export default function MaquentalLanding() {
 
       {/* Floating WhatsApp Button */}
       <motion.a
-        href="https://wa.me/56983105174"
+        href={wsp}
         target="_blank"
         rel="noopener noreferrer"
         className="fixed bottom-6 right-6 z-50 w-14 h-14 bg-green-500 hover:bg-green-600 rounded-full flex items-center justify-center shadow-lg hover:shadow-xl transition-all"
