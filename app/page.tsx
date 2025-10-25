@@ -1094,7 +1094,7 @@ export default function MaquentalLanding() {
             <div>
               <h4 className="font-semibold mb-4">Contacto</h4>
               <ul className="space-y-2 opacity-80">
-                <li>contacto@maquental.cl</li>
+                <li>Nival2jose@gmail.com</li>
                 <li>+56 9 8310 5174</li>
                 <li>Región de Los Ríos, Chile</li>
               </ul>
