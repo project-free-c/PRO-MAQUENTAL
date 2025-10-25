@@ -1,7 +1,7 @@
 "use client"
 
 import { useState, useEffect } from "react"
-import { motion } from "framer-motion"
+import { motion, AnimatePresence } from "framer-motion"
 import {
   Waves,
   Leaf,
@@ -22,16 +22,147 @@ import {
   ImageIcon,
   Microscope,
   ChevronUp,
+  Menu,
+  X
 } from "lucide-react"
 import { Button } from "@/components/ui/button"
 import { Card, CardContent } from "@/components/ui/card"
 import Image from "next/image"
 
+const Header = () => {
+  const [activeSection, setActiveSection] = useState<string>("");
+  const [menuOpen, setMenuOpen] = useState(false);
+
+  // --- Detecta sección activa (opcional, puedes quitar si ya lo tienes en otro lado) ---
+  useEffect(() => {
+    const sections = document.querySelectorAll("section[id]");
+    const observer = new IntersectionObserver(
+      (entries) => {
+        entries.forEach((entry) => {
+          if (entry.isIntersecting) {
+            setActiveSection(entry.target.id);
+          }
+        });
+      },
+      { threshold: 0.6 }
+    );
+
+    sections.forEach((section) => observer.observe(section));
+    return () => sections.forEach((section) => observer.unobserve(section));
+  }, []);
+
+  const navLinks = [
+    { href: "#producto", label: "Producto" },
+    { href: "#beneficios", label: "Beneficios" },
+    { href: "#origen", label: "Origen" },
+    { href: "#proceso", label: "Proceso" },
+    { href: "#cientifico", label: "Respaldo Científico" },
+    { href: "#galeria", label: "Galería" },
+    { href: "#contacto", label: "Contacto" },
+  ];
+
+  return (
+    <header className="fixed top-0 left-0 right-0 z-50 bg-white/95 backdrop-blur-sm border-b border-border">
+      <nav className="container mx-auto px-4 py-4">
+        <div className="flex items-center justify-between">
+          {/* --- Logo --- */}
+          <motion.div
+            initial={{ opacity: 0, x: -20 }}
+            animate={{ opacity: 1, x: 0 }}
+            className="flex items-center gap-2"
+          >
+            <Image
+              src="/galeria/logo.png"
+              alt="Logo Maquental"
+              width={60}
+              height={60}
+              className="mx-auto rounded-full"
+            />
+          </motion.div>
+
+          {/* --- Menú de escritorio --- */}
+          <motion.div
+            initial={{ opacity: 0, x: 20 }}
+            animate={{ opacity: 1, x: 0 }}
+            className="hidden md:flex items-center gap-6"
+          >
+            {navLinks.map(({ href, label }) => (
+              <a
+                key={href}
+                href={href}
+                className={`transition-colors ${
+                  activeSection === href.replace("#", "")
+                    ? "text-primary font-bold"
+                    : "text-foreground hover:text-primary"
+                }`}
+              >
+                {label}
+              </a>
+            ))}
+            <Button className="bg-primary hover:bg-ocean-deep text-primary-foreground">
+              <a href="https://wa.me/56983105174" target="_blank">
+                Solicitar Información
+              </a>
+            </Button>
+          </motion.div>
+
+          {/* --- Botón hamburguesa (solo móvil) --- */}
+          <div className="md:hidden">
+            <button
+              onClick={() => setMenuOpen(!menuOpen)}
+              className="text-foreground hover:text-primary transition-colors"
+            >
+              {menuOpen ? <X size={28} /> : <Menu size={28} />}
+            </button>
+          </div>
+        </div>
+
+        {/* --- Menú móvil desplegable --- */}
+        <AnimatePresence>
+          {menuOpen && (
+            <motion.div
+              initial={{ opacity: 0, y: -10 }}
+              animate={{ opacity: 1, y: 0 }}
+              exit={{ opacity: 0, y: -10 }}
+              transition={{ duration: 0.2 }}
+              className="md:hidden mt-4 flex flex-col items-center gap-4  border-t border-border py-4"
+            >
+              {navLinks.map(({ href, label }) => (
+                <a
+                  key={href}
+                  href={href}
+                  onClick={() => setMenuOpen(false)}
+                  className={`transition-colors ${
+                    activeSection === href.replace("#", "")
+                      ? "text-primary font-bold"
+                      : "text-foreground hover:text-primary"
+                  }`}
+                >
+                  {label}
+                </a>
+              ))}
+              <Button className="bg-primary hover:bg-ocean-deep text-primary-foreground">
+                <a
+                  href="https://wa.me/56983105174"
+                  target="_blank"
+                  onClick={() => setMenuOpen(false)}
+                >
+                  Solicitar Información
+                </a>
+              </Button>
+            </motion.div>
+          )}
+        </AnimatePresence>
+      </nav>
+    </header>
+  );
+}
+
+
 export default function MaquentalLanding() {
   const [currentOriginImage, setCurrentOriginImage] = useState(0)
   const [isScientificExpanded, setIsScientificExpanded] = useState(false)
   const [selectedItem, setSelectedItem] = useState<null | { src: string; type: string; alt?: string }>(null);
-  const [activeSection, setActiveSection] = useState<string>("");
 
   const originImages = [
     { src: "/galeria/origen/origen.jpeg", alt: "Origen", type: "image" },
@@ -93,127 +224,10 @@ export default function MaquentalLanding() {
     setCurrentOriginImage((prev) => (prev - 1 + originImages.length) % originImages.length)
   }
 
-  useEffect(() => {
-    const sections = document.querySelectorAll("section[id]");
-    const observer = new IntersectionObserver(
-      (entries) => {
-        entries.forEach((entry) => {
-          if (entry.isIntersecting) {
-            setActiveSection(entry.target.id);
-          }
-        });
-      },
-      { threshold: 0.6 }
-    );
-
-    sections.forEach((section) => observer.observe(section));
-    return () => sections.forEach((section) => observer.unobserve(section));
-  }, []);
-
   return (
     <div className="min-h-screen">
       {/* Header */}
-      <header className="fixed top-0 left-0 right-0 z-50 bg-white/95 backdrop-blur-sm border-b border-border">
-        <nav className="container mx-auto px-4 py-4">
-          <div className="flex items-center justify-between">
-            <motion.div
-              initial={{ opacity: 0, x: -20 }}
-              animate={{ opacity: 1, x: 0 }}
-              className="flex items-center gap-2"
-            >
-              <Image
-                src="/galeria/logo.png" 
-                alt="Logo Maquental"
-                width={60}   
-                height={60}  
-                className="mx-auto rounded-full"
-              />              
-            </motion.div>
-
-            <motion.div
-              initial={{ opacity: 0, x: 20 }}
-              animate={{ opacity: 1, x: 0 }}
-              className="hidden md:flex items-center gap-6"
-            >
-              <a 
-                href="#producto" 
-                className={`transition-colors ${
-                  activeSection === "producto"
-                    ? "text-primary font-bold"
-                    : "text-foreground hover:text-primary"
-                }`}
-              >
-                Producto
-              </a>
-              <a 
-                href="#beneficios" 
-                className={`transition-colors ${
-                  activeSection === "beneficios"
-                    ? "text-primary font-bold"
-                    : "text-foreground hover:text-primary"
-                }`}
-              >
-                Beneficios
-              </a>
-              <a 
-                href="#origen" 
-                className={`transition-colors ${
-                  activeSection === "origen"
-                    ? "text-primary font-bold"
-                    : "text-foreground hover:text-primary"
-                }`} 
-              >
-                Origen
-              </a>
-              <a 
-                href="#proceso" 
-                className={`transition-colors ${
-                  activeSection === "proceso"
-                    ? "text-primary font-bold"
-                    : "text-foreground hover:text-primary"
-                }`}
-              >
-                Proceso
-              </a>
-              <a 
-                href="#cientifico" 
-                className={`transition-colors ${
-                  activeSection === "cientifico"
-                    ? "text-primary font-bold"
-                    : "text-foreground hover:text-primary"
-                }`}
-              >
-                Respaldo Científico
-              </a>
-              <a 
-                href="#galeria" 
-                className={`transition-colors ${
-                  activeSection === "galeria"
-                    ? "text-primary font-bold"
-                    : "text-foreground hover:text-primary"
-                }`}
-              >
-                Galería
-              </a>
-              <a 
-                href="#contacto" 
-                className={`transition-colors ${
-                  activeSection === "contacto"
-                    ? "text-primary font-bold"
-                    : "text-foreground hover:text-primary"
-                }`}
-              >
-                Contacto
-              </a>
-              <Button className="bg-primary hover:bg-ocean-deep text-primary-foreground">
-                <a href="https://wa.me/56983105174" target="_blank">
-                    Solicitar Información
-                </a>
-              </Button>
-            </motion.div>
-          </div>
-        </nav>
-      </header>
+      <Header/>
 
       {/* Hero Section */}
       <section className="relative min-h-screen flex items-center justify-center overflow-hidden pt-20">
@@ -562,7 +576,7 @@ export default function MaquentalLanding() {
           <div className="max-w-6xl mx-auto">
             <div className="grid md:grid-cols-2 gap-12 items-start">
               {/* Left: Image */}
-              <motion.div {...fadeInUp} className="sticky top-24">
+              <motion.div {...fadeInUp} className="md:sticky top-24">
                 <div className="relative h-[600px] rounded-2xl overflow-hidden shadow-2xl">
                   <Image
                     src="/galeria/analisis.png"
@@ -1012,12 +1026,12 @@ export default function MaquentalLanding() {
       </section>
 
       {/* Footer */}
-      <footer className="bg-ocean-deep text-white py-12">
+      <footer className="bg-ocean-deep text-white py-12 text-center md:text-left">
         <div className="container mx-auto px-4">
           <div className="grid md:grid-cols-4 gap-8 mb-8">
             <div>
               <div className="flex items-center gap-2 mb-4">
-                <div className="bg-white m-auto">
+                <div className="bg-white m-auto rounded-full">
                   <Image
                     src="/galeria/logo.png" 
                     alt="Logo Maquental"
@@ -1030,7 +1044,7 @@ export default function MaquentalLanding() {
                 {/* <span className="text-2xl font-bold">Maquental</span> */}
               </div>
               <p className="opacity-80 leading-relaxed">
-                Bioestimulantes naturales desde las costas de Mehuín para una agricultura sostenible.
+                Bioestimulante naturales desde las costas de Mehuín para una agricultura sostenible.
               </p>
             </div>
 
